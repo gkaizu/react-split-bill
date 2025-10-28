@@ -32,6 +32,7 @@ function Button({ children, onClick }) {
 export default function App() {
   const [friends, setFriends] = useState(initialFriends);
   const [showAddFriend, setShowAddFriend] = useState(false);
+  const [selectedFriend, setSelectedFriend] = useState(null);
 
   function handleShowAddFriend() {
     setShowAddFriend((show) => !show);
@@ -42,34 +43,52 @@ export default function App() {
     setShowAddFriend(false);
   }
 
+  function handleSelected(friend) {
+    setSelectedFriend((curr) => (curr?.id === friend.id ? null : friend));
+    setShowAddFriend(false);
+  }
+
   return (
     <div className="app">
       <div className="sidebar">
-        <FriendsList friends={friends} />
+        <FriendsList
+          friends={friends}
+          onSelected={handleSelected}
+          selectedFriend={selectedFriend}
+        />
+
         {showAddFriend && <FormAddFriend onAddFriend={handleAddFriend} />}
+
         <Button onClick={handleShowAddFriend}>
           {showAddFriend ? "閉じる" : "友達を追加"}
         </Button>
       </div>
 
-      <FormSplitBill />
+      {selectedFriend && <FormSplitBill selectedFriend={selectedFriend} />}
     </div>
   );
 }
 
-function FriendsList({ friends }) {
+function FriendsList({ friends, onSelected, selectedFriend }) {
   return (
     <ul>
       {friends.map((friend) => (
-        <Friend friend={friend} key={friend.id} />
+        <Friend
+          friend={friend}
+          key={friend.id}
+          onSelected={onSelected}
+          selectedFriend={selectedFriend}
+        />
       ))}
     </ul>
   );
 }
 
-function Friend({ friend }) {
+function Friend({ friend, onSelected, selectedFriend }) {
+  const isSelected = selectedFriend?.id === friend.id;
+
   return (
-    <li>
+    <li className={isSelected ? "selected" : ""}>
       <img src={friend.image} alt={friend.name} />
       <h3>{friend.name}</h3>
 
@@ -85,7 +104,9 @@ function Friend({ friend }) {
       )}
       {friend.balance === 0 && <p>割り勘</p>}
 
-      <Button>選択</Button>
+      <Button onClick={() => onSelected(friend)}>
+        {isSelected ? "閉じる" : "選択"}
+      </Button>
     </li>
   );
 }
@@ -134,24 +155,24 @@ function FormAddFriend({ onAddFriend }) {
   );
 }
 
-function FormSplitBill() {
+function FormSplitBill({ selectedFriend }) {
   return (
     <form className="form-split-bill">
-      <h2>Xと割り勘</h2>
+      <h2>{selectedFriend.name}と割り勘</h2>
 
       <label>💰 金額</label>
-      <input type="text" />
+      <input type="text" value={selectedFriend.balance} />
 
       <label>🙎‍♂️ あなたの支払い額</label>
       <input type="text" />
 
-      <label>👬 Xの支払い額</label>
+      <label>👬 {selectedFriend.name}の支払い額</label>
       <input type="text" disabled />
 
       <label>👬 支払いする人</label>
       <select>
         <option value="user">あなた</option>
-        <option value="friend">X</option>
+        <option value="friend">{selectedFriend.name}</option>
       </select>
 
       <Button>追加する</Button>
