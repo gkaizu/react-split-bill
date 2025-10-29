@@ -156,26 +156,42 @@ function FormAddFriend({ onAddFriend }) {
 }
 
 function FormSplitBill({ selectedFriend }) {
+  const [bill, setBill] = useState("");
+  const [paidByUser, setPaidByUser] = useState("");
+  const paidByFriend = bill ? bill - paidByUser : "";
+  const [whoIsPaying, setWhoIsPaying] = useState("user");
+
   return (
     <form className="form-split-bill">
       <h2>{selectedFriend.name}と割り勘</h2>
 
       <label>💰 金額</label>
-      <input type="text" value={selectedFriend.balance} />
+      <input
+        type="text"
+        value={bill}
+        onChange={(e) => setBill(Number(e.target.value))}
+      />
 
       <label>🙎‍♂️ あなたの支払い額</label>
-      <input type="text" />
+      <input
+        type="text"
+        value={paidByUser}
+        onChange={(e) => setPaidByUser(Number(e.target.value) > bill ? paidByUser : Number(e.target.value))}
+      />
 
       <label>👬 {selectedFriend.name}の支払い額</label>
-      <input type="text" disabled />
+      <input type="text" disabled value={paidByFriend} />
 
       <label>👬 支払いする人</label>
-      <select>
+      <select
+        value={whoIsPaying}
+        onChange={(e) => setWhoIsPaying(e.target.value)}
+      >
         <option value="user">あなた</option>
         <option value="friend">{selectedFriend.name}</option>
       </select>
 
-      <Button>追加する</Button>
+      <Button>割り勘する</Button>
     </form>
   );
 }
