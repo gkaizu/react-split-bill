@@ -1,4 +1,5 @@
 import { useState } from "react";
+import Button from './components/Button'
 
 const initialFriends = [
   {
@@ -20,14 +21,6 @@ const initialFriends = [
     balance: 0,
   },
 ];
-
-function Button({ children, onClick }) {
-  return (
-    <button className="button" onClick={onClick}>
-      {children}
-    </button>
-  );
-}
 
 export default function App() {
   const [friends, setFriends] = useState(initialFriends);
