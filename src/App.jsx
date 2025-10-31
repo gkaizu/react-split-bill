@@ -1,6 +1,6 @@
 import { useState } from "react";
-import Button from './components/Button'
-import Friend from './components/Friend'
+import Button from "./components/Button";
+import FriendsList from "./components/FriendsList";
 
 const initialFriends = [
   {
@@ -46,8 +46,9 @@ export default function App() {
     setFriends((friends) =>
       friends.map((friend) =>
         friend.id === selectedFriend.id
-          ? { ...friend, balance: friend.balance + value } 
-          : friend )
+          ? { ...friend, balance: friend.balance + value }
+          : friend
+      )
     );
 
     setSelectedFriend(null);
@@ -78,23 +79,6 @@ export default function App() {
     </div>
   );
 }
-
-function FriendsList({ friends, onSelected, selectedFriend }) {
-  return (
-    <ul>
-      {friends.map((friend) => (
-        <Friend
-          friend={friend}
-          key={friend.id}
-          onSelected={onSelected}
-          selectedFriend={selectedFriend}
-        />
-      ))}
-    </ul>
-  );
-}
-
-
 
 function FormAddFriend({ onAddFriend }) {
   const [name, setName] = useState("");
